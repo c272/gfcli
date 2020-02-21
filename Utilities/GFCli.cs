@@ -10,7 +10,8 @@ namespace gfcli
     public class GFCli
     {
         public static ConsoleColor DefaultConsoleColour = Console.ForegroundColor;
-        public static char ItemSelectedChar = '▶';
+        public static char ItemSelectedChar = '>';
+        public static ConsoleColor ItemSelectedColour = ConsoleColor.Green;
     }
 
     /// <summary>

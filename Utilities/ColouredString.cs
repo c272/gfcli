@@ -91,6 +91,15 @@ namespace gfcli
         /// Constructor for a blank coloured string.
         /// </summary>
         public ColouredString() { }
+        
+        /// <summary>
+        /// Constructor for copying a coloured string.
+        /// </summary>
+        public ColouredString(ColouredString c)
+        {
+            //Some LINQ to shallow copy the list.
+            Parts = c.Parts.Where(x => true).ToList();
+        }
 
         ///////////////
         /// METHODS ///
@@ -235,6 +244,24 @@ namespace gfcli
             throw new IndexOutOfRangeException("Index was outside the bounds of the string.");
         }
 
+        /// <summary>
+        /// Sets all string components of this text to have one colour.
+        /// </summary>
+        /// <param name="itemSelectedColour"></param>
+        public void SetColour(ConsoleColor c)
+        {
+            for (int i=0; i<Parts.Count; i++)
+            {
+                if (Parts[i].Type != StringPartType.String) { return; }
+                Parts[i] = new StringPart()
+                {
+                    Text = Parts[i].Text,
+                    Colour = c,
+                    Type = Parts[i].Type
+                };
+            }
+        }
+
         ////////////////////////////
         // OVERRIDES AND C# SUGAR //
         ////////////////////////////
@@ -260,7 +287,7 @@ namespace gfcli
     /// <summary>
     /// Represents a single part of a string.
     /// </summary>
-    public class StringPart
+    public struct StringPart
     {
         //New line string part.
         public static StringPart NewLine = new StringPart() { Type = StringPartType.NewLine };

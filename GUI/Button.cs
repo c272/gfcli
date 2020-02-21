@@ -25,19 +25,24 @@ namespace gfcli
             }
             set
             {
+                //Turn on/off selection and colours.
                 if (value)
                 {
                     label.Text = GFCli.ItemSelectedChar + " " + label.Text;
+                    label.Text.SetColour(GFCli.ItemSelectedColour);
                 }
                 else
                 {
                     if (label.Text.ToString().StartsWith(GFCli.ItemSelectedChar))
                     {
-                        label.Text = label.Text.Substring(2);
+                        label.Text = originalLabel;
                     }
                 }
+
+                iSelected = value;
             }
         }
+        private ColouredString originalLabel = null;
         private bool iSelected;
 
         /// <summary>
@@ -52,6 +57,7 @@ namespace gfcli
         {
             //Add the button label.
             label = new Label(text);
+            originalLabel = label.Text;
             base.AddItem(label);
             Callback = callback;
 
