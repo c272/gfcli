@@ -17,7 +17,7 @@ namespace gfcli
         /// <summary>
         /// Adds a button to the panel.
         /// </summary>
-        public Panel AddButton(ColouredString text, Action<string> callback)
+        public Panel AddButton(ColouredString text, Action callback)
         {
             base.Items.Add(new Button(text, callback));
             return this;

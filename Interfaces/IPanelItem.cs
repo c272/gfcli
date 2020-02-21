@@ -8,19 +8,18 @@ namespace gfcli.Interfaces
     public interface IPanelItem
     {
         /// <summary>
-        /// Alignment of the item in the parent panel.
-        /// </summary>
-        Alignment Align { get; set; }
-
-        /// <summary>
         /// Margin on all sides of this item.
         /// </summary>
-        int Margin { get; set; }
+        public int MarginTop { get; set; }
+
+        public int MarginLeft { get; set; }
+        public int MarginRight { get; set; }
+        public int MarginBottom { get; set; }
 
         /// <summary>
         /// Builds the panel item into a list of lines to be used.
         /// </summary>
-        ColouredString Build();
+        public abstract ColouredString Build();
     }
 
     /// <summary>

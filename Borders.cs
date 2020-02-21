@@ -48,5 +48,24 @@ namespace gfcli
             Horizontal = chars[4];
             Vertical = chars[5];
         }
+
+        /// <summary>
+        /// Builds the horizontal line for either the top or bottom of the border.
+        /// </summary>
+        public string BuildHorizontal(int insideWidth, bool top)
+        {
+            string final = "";
+
+            //Add the top left/bottom left corner.
+            if (top) { final += TopLeft; } else { final += BottomLeft; }
+
+            //Add width (needs +1 because 1 character has already been added).
+            final = final.PadRight(insideWidth + 1, Horizontal);
+
+            //Add top right/bottom right.
+            if (top) { final += TopRight; } else { final += BottomRight; }
+
+            return final;
+        }
     }
 }

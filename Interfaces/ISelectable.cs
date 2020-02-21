@@ -7,9 +7,9 @@ namespace gfcli.Interfaces
     /// <summary>
     /// Represents a selectable item on the CLI.
     /// </summary>
-    public interface ISelectable<T> : IPanelItem
+    public interface ISelectable : IPanelItem
     {
-        public Action<T> Callback { get; set; }
+        public Action Callback { get; set; }
         public bool Selected { get; set; }
     }
 }

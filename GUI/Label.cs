@@ -11,19 +11,21 @@ namespace gfcli
     public class Label : IPanelItem
     {
         //The text on this label.
-        private ColouredString text;
+        public ColouredString Text;
         public Label(ColouredString text)
         {
-            this.text = text;
+            this.Text = text;
         }
 
-        //The alignment and margin of this label.
-        public Alignment Align { get; set; } = Alignment.Left;
-        public int Margin { get; set; } = 0;
+        //The margins of this label.
+        public int MarginTop { get; set; } = 0;
+        public int MarginLeft { get; set; } = 0;
+        public int MarginRight { get; set; } = 0;
+        public int MarginBottom { get; set; } = 0;
 
         public ColouredString Build()
         {
-            return text;
+            return Text;
         }
     }
 }

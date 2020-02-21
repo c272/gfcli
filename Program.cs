@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace gfcli
 {
@@ -6,7 +7,13 @@ namespace gfcli
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            //Make a panel, display it.
+            var panel = new Panel().SetBorders(Border.Double)
+                                   .AddLabel("I ♥ GFCli.")
+                                   .SetPadding(1, SpacingMode.Horizontal)
+                                   .SetMargins(1);
+
+            panel.Display();
         }
     }
 }
