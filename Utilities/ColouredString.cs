@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace gfcli
@@ -32,18 +33,6 @@ namespace gfcli
 
                 //Return whatever's left.
                 if (lineParts.Count > 0) { yield return new ColouredString(lineParts); }
-            }
-        }
-
-        /// <summary>
-        /// Returns a substring of this coloured string.
-        /// </summary>
-        public ColouredString Substring(int index)
-        {
-            List<StringPart> toRet = new List<StringPart>();
-            for (int i=0; i<Parts.Count; i++)
-            {
-
             }
         }
 
@@ -199,12 +188,60 @@ namespace gfcli
             return this;
         }
 
+        /// <summary>
+        /// Returns a substring of this coloured string.
+        /// </summary>
+        public ColouredString Substring(int index)
+        {
+            int curIndex = 0;
+            for (int i = 0; i < Parts.Count; i++)
+            {
+                //Increment the index.
+                if (Parts[i].Type == StringPartType.NewLine)
+                {
+                    curIndex++;
+                }
+                else
+                {
+                    curIndex += Parts[i].Text.Length;
+                }
+
+                //Has it gone over?
+                if (curIndex >= index)
+                {
+                    //Yes. If this part is a newline, just return this and all parts after.
+                    if (Parts[i].Type == StringPartType.NewLine)
+                    {
+                        return new ColouredString(Parts.Skip(i).ToList());
+                    }
+
+                    //Not a newline, get the text out to use.
+                    int charsFromEnd = curIndex - index;
+                    List<StringPart> partsToRet = new List<StringPart>();
+                    partsToRet.Add(new StringPart()
+                    {
+                        Text = Parts[i].Text.Substring(Parts[i].Text.Length - charsFromEnd),
+                        Colour = Parts[i].Colour,
+                        Type = StringPartType.String
+                    });
+
+                    //Add the rest of the parts.
+                    partsToRet.AddRange(Parts.Skip(i + 1));
+                    return new ColouredString(partsToRet);
+                }
+            }
+
+            //Index out of range.
+            throw new IndexOutOfRangeException("Index was outside the bounds of the string.");
+        }
+
         ////////////////////////////
         // OVERRIDES AND C# SUGAR //
         ////////////////////////////
 
-        //Implicit conversion from string to ColouredString.
+        //Implicit conversion from string to ColouredString, and vice versa.
         public static implicit operator ColouredString(string s) => new ColouredString(s);
+        public static explicit operator string(ColouredString s) => s.ToString();
 
         //Stringifies the coloured string to a basic string.
         public override string ToString()
@@ -237,6 +274,5 @@ namespace gfcli
     {
         NewLine,
         String,
-        Padding
     }
 }
