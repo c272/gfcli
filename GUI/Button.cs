@@ -28,12 +28,12 @@ namespace gfcli
                 //Turn on/off selection and colours.
                 if (value)
                 {
-                    label.Text = GFCli.ItemSelectedChar + " " + label.Text;
+                    label.Text = GFCli.ItemSelectedPrefix + label.Text;
                     label.Text.SetColour(GFCli.ItemSelectedColour);
                 }
                 else
                 {
-                    if (label.Text.ToString().StartsWith(GFCli.ItemSelectedChar))
+                    if (label.Text.ToString().StartsWith(GFCli.ItemSelectedPrefix))
                     {
                         label.Text = originalLabel;
                     }

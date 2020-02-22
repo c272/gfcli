@@ -32,6 +32,11 @@ namespace gfcli.Interfaces
         public int PaddingBottom { get; set; }
 
         /// <summary>
+        /// Whether to automatically stop displaying the panel once an option is selected.
+        /// </summary>
+        public bool AutoStopDisplay { get; set; } = true;
+
+        /// <summary>
         /// The title of this panel.
         /// </summary>
         public string Title { get; set; } = null;
@@ -183,12 +188,13 @@ namespace gfcli.Interfaces
         /// <summary>
         /// Displays the static panel on console, with input disabled.
         /// </summary>
-        public void Display()
+        public int Display()
         {
             //Make sure the output mode is unicode.
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            Console.OutputEncoding = Encoding.Unicode;
 
             //Print lines.
+            int lineCount = 0;
             foreach (var line in Build().Lines)
             {
                 foreach (var part in line.Parts)
@@ -198,7 +204,19 @@ namespace gfcli.Interfaces
                     Console.ResetColor();
                 }
                 Console.WriteLine();
+                lineCount++;
             }
+
+            return lineCount;
+        }
+
+        /// <summary>
+        /// Ends a panel being shown after the next keypress.
+        /// </summary>
+        bool endShowNow = false;
+        public void EndShow()
+        {
+            endShowNow = true;
         }
 
         /// <summary>
@@ -206,7 +224,116 @@ namespace gfcli.Interfaces
         /// </summary>
         private void ShowInputMode()
         {
-            throw new NotImplementedException();
+            //Select the first item before looping.
+            SwitchSelection(false);
+
+            //Loop and display.
+            while (true)
+            {
+                //End show?
+                if (endShowNow)
+                {
+                    endShowNow = false;
+                    return;
+                }
+
+                //Print the display.
+                int lines = Display();
+
+                //Get input, and process.
+                switch (Console.ReadKey(true).Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        SwitchSelection(true);
+                        break;
+                    case ConsoleKey.DownArrow:
+                        SwitchSelection(false);
+                        break;
+                    case ConsoleKey.Enter:
+                        //if there's nothing selected, keep looping
+                        if (!CallSelection()) { continue; }
+
+                        //if auto stop display is on, stop after the selection
+                        if (AutoStopDisplay) { return; }
+                        break;
+                    case ConsoleKey.Escape:
+                        return;
+                }
+
+                //Redact the display before printing again.
+                for (int i=0; i<lines; i++)
+                {
+                    GFCli.ClearLastLine();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calls the currently selected selectable item on the panel.
+        /// </summary>
+        private bool CallSelection()
+        {
+            //Is an item selected?
+            int selectedIndex = Items.FindIndex(x => x is ISelectable && ((ISelectable)x).Selected == true);
+            if (selectedIndex == -1) { return false; }
+
+            //Does the call handler exist?
+            var item = ((ISelectable)Items[selectedIndex]);
+            if (item.Callback == null)
+            {
+                throw new Exception("No call handler set for selectable item of type '" + item.GetType() + "'.");
+            }
+
+            //Yes, call the handler and return true.
+            item.Callback();
+            return true;
+        }
+
+        /// <summary>
+        /// Switches the currently selected selectable item on the panel.
+        /// </summary>
+        private void SwitchSelection(bool up)
+        {
+            //Get a list of ISelectable items.
+            var selectable = new List<ISelectable>();
+            foreach (var item in Items)
+            {
+                if (item is ISelectable)
+                {
+                    selectable.Add((ISelectable)item);
+                }
+            }
+
+            //Any exist?
+            if (selectable.Count == 0) { return; }
+
+            //Find the first selected one.
+            int selectedIndex = selectable.FindIndex(x => x.Selected == true);
+            if (selectedIndex == -1)
+            {
+                //None selected, select the first one.
+                selectable[0].Selected = true;
+            }
+            else
+            {
+                //Deselect first, select new.
+                int i;
+                if (up)
+                {
+                    //going up
+                    i = selectedIndex - 1;
+                    if (i < 0) { i = selectable.Count - 1; }
+                }
+                else
+                {
+                    //going down
+                    i = selectedIndex + 1;
+                    if (i >= selectable.Count) { i = 0; }
+                }
+
+                selectable[selectedIndex].Selected = false;
+                selectable[i].Selected = true;
+            }
         }
 
         /// <summary>

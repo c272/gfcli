@@ -10,8 +10,18 @@ namespace gfcli
     public class GFCli
     {
         public static ConsoleColor DefaultConsoleColour = Console.ForegroundColor;
-        public static char ItemSelectedChar = '>';
+        public static string ItemSelectedPrefix = "> ";
         public static ConsoleColor ItemSelectedColour = ConsoleColor.Green;
+
+        /// <summary>
+        /// Clears the last console line.
+        /// </summary>
+        public static void ClearLastLine()
+        {
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, Console.CursorTop - (Console.WindowWidth >= Console.BufferWidth ? 1 : 0));
+        }
     }
 
     /// <summary>

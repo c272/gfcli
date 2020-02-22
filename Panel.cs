@@ -35,9 +35,10 @@ namespace gfcli
         /// <summary>
         /// Adds an option to the panel.
         /// </summary>
-        public Panel AddOption()
+        public Panel AddOption(ColouredString text, Action callback)
         {
-            throw new NotImplementedException();
+            base.Items.Add(new Option(text, callback));
+            return this;
         }
     }
 }
